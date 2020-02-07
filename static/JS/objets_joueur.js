@@ -7,15 +7,16 @@
 */
 
 
-var joueur = function(id, couleur, x, y) {
+var joueur = function(id, x, y, angle=0) {
 	
 	//propriétés basiques
 	this.id = id;
 	this.x = x;
 	this.y = y;
-	this.angle = 0;
+	this.angle = angle;
 	this.status = 'ok';
 	this.score = 0;
+	this.distant = (id_joureur_local != this.id);
 	
 	//Les vitesses sont des "pas" en pixels
 	this.vitesse_deplacement = vitesse_deplacement_standard;
@@ -34,7 +35,16 @@ var joueur = function(id, couleur, x, y) {
 	this.touche_droite = touche_droite_standard[id];
 	this.touche_tir = touche_tir_standard[id];
 
-	
+	this.teleportation = function(x,y,angle) {
+		this.x = x;
+		this.y = y;
+		this.angle = angle;
+	};
+
+	this.envoyer_position = function() {
+		socket.emit('j', {'id':Math.round(this.id),'x':Math.round(this.x),'y':Math.round(this.y),'angle':Math.round(this.angle)});
+	}
+
 	this.rotation_gauche = function() {
 		
 		var nouveau_angle = this.angle - this.vitesse_rotation;
@@ -43,6 +53,7 @@ var joueur = function(id, couleur, x, y) {
 		if(this.test_collision(this.x, this.y, nouveau_angle)){
 			this.angle = nouveau_angle;
 			this.reset_angle();
+			this.envoyer_position()
 		}
 		
 	};
@@ -55,6 +66,7 @@ var joueur = function(id, couleur, x, y) {
 		if(this.test_collision(this.x, this.y, nouveau_angle)){
 			this.angle = nouveau_angle;
 			this.reset_angle();
+			this.envoyer_position()
 		}
 		
 	};
@@ -69,6 +81,7 @@ var joueur = function(id, couleur, x, y) {
 		if(this.test_collision(nouveau_x, nouveau_y, this.angle)){
 			this.x = nouveau_x;
 			this.y = nouveau_y;
+			this.envoyer_position()
 		}
 		
 	};
@@ -83,6 +96,7 @@ var joueur = function(id, couleur, x, y) {
 		if(this.test_collision(nouveau_x, nouveau_y, this.angle)){
 			this.x = Math.round(nouveau_x);
 			this.y = Math.round(nouveau_y);
+			this.envoyer_position()
 		}
 		
 	};
@@ -227,6 +241,9 @@ var joueur = function(id, couleur, x, y) {
 			var nouveau_y = this.y + Math.sin((this.angle-90)*(Math.PI/180)) * 50;
 			
 			projectiles.push(new projectile(nouveau_x, nouveau_y, this.angle));
+
+			socket.emit('tir', {'id':this.id,'x':Math.round(nouveau_x),'y':Math.round(nouveau_y),'angle':Math.round(this.angle)});
+
 			this.dernier_tir = Date.now();
 		}
 		

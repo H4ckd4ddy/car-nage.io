@@ -9,38 +9,42 @@
 */
 
 
-function creation_joueur(couleur, x, y) {
-	var nouveau_joueur = new joueur(nombre_joueurs, couleur, x, y);
-	nombre_joueurs++;
-	return nouveau_joueur;
+function generation_joueurs() {
+    joueurs = [];
+    for(let i = 0;i < nombre_de_joueurs;i++){
+        joueurs.push(new joueur(i,emplacements_joueurs[i][0],emplacements_joueurs[i][1],emplacements_joueurs[i][2]))
+    }
 }
-
 
 //Fonction qui verifie les touches actuellement utilsées (presente dans le tableau "touches")
 //et execution de la fonction correspondante
 function deplacements_joueurs(){
 	
 	for(var i = 0;i < joueurs.length;i++){
-		
-		if(touches.indexOf(joueurs[i].touche_gauche) >= 0){
-			joueurs[i].rotation_gauche();
-		}
-		
-		if(touches.indexOf(joueurs[i].touche_droite) >= 0){
-			joueurs[i].rotation_droite();
-		}
-		
-		if(touches.indexOf(joueurs[i].touche_haut) >= 0){
-			joueurs[i].avancer();
-		}
-		
-		if(touches.indexOf(joueurs[i].touche_bas) >= 0){
-			joueurs[i].reculer();
-		}
-		
-		if(touches.indexOf(joueurs[i].touche_tir) >= 0){
-			joueurs[i].tir();
-		}
+
+        if(!joueurs[i].distant){
+            
+            if(touches.indexOf(joueurs[i].touche_gauche) >= 0){
+    			joueurs[i].rotation_gauche();
+    		}
+    		
+    		if(touches.indexOf(joueurs[i].touche_droite) >= 0){
+    			joueurs[i].rotation_droite();
+    		}
+    		
+    		if(touches.indexOf(joueurs[i].touche_haut) >= 0){
+    			joueurs[i].avancer();
+    		}
+    		
+    		if(touches.indexOf(joueurs[i].touche_bas) >= 0){
+    			joueurs[i].reculer();
+    		}
+    		
+    		if(touches.indexOf(joueurs[i].touche_tir) >= 0){
+    			joueurs[i].tir();
+    		}
+
+        }
 		
 	}
 	

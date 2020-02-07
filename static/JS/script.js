@@ -7,6 +7,9 @@ var son = document.getElementById('son');
 document.getElementById("background").style.height = hauteur+"px";
 document.getElementById("background").style.width = largeur+"px";
 
+emplacements_joueurs = [[50,70,180],[750,730,0],[750,70,180],[50,730,0]];
+
+
 var vitesse_deplacement_standard = 10;
 var vitesse_rotation_standard = 10;
 var delai_tir_standard = 1;
@@ -16,9 +19,11 @@ var largeur_joueur = 40;
 var longueur_joueur = largeur_joueur*1.618033;
 var diametreProjectile = 5;
 
-var nombre_joueurs = 0;
 var joueurs = [];
 var projectiles = [];
+
+
+var socket;
 
 
 //On prend le contexte 2d du canvas
@@ -37,29 +42,11 @@ function affichageMurs(array) {
 }
 
 //Action des boutons
-document.getElementById('btnMapAlea').onclick = function () {
-    creationMapAleatoire();
-    newGame();
-};
-document.getElementById('btnDevMap').onclick = function () {
-    map = devMap;
-    newGame();
-};
-document.getElementById('btnDevMap2').onclick = function () {
-    map = devMap2;
-    newGame();
-    joueurs[0].x = 700;
-    joueurs[0].y = 100;
-    joueurs[1].x = 100;
-    joueurs[1].y = 700;
-};
 document.getElementById('btnNewGame').onclick = function () {
     map = devMap;
-    newGame();
+    new_game();
 };
-document.getElementById('btnMenu').onclick = function () {
-    showMenu();
-};
+
 /* liste des codes des touche de jeu par defaut [joueur1,joueur2] */
 var touche_haut_standard = [38,90];
 var touche_bas_standard = [40,83];
@@ -86,25 +73,37 @@ document.addEventListener("keyup", function(event){
 
 /* Initialisation, a la fin du chargement du DOM */
 
-function newGame() {
-    document.getElementById('btnNewGame').setAttribute('hidden', 'true');
-    clearInterval(menuLoop);
-    clearInterval(autoPilotLoop);
-    clearInterval(nbAleaPilotLoop);
+function new_game() {
+    //document.getElementById('btnNewGame').setAttribute('hidden', 'true');
+    //clearInterval(menuLoop);
+    //clearInterval(autoPilotLoop);
+    //clearInterval(nbAleaPilotLoop);
     clearInterval(run);
     projectiles = [];
     touches = [];
-    joueurs[0].angle = 0;
-    joueurs[0].x = 300;
-    joueurs[0].y = 300;
-    joueurs[1].angle = 0;
-    joueurs[1].x = 600;
-    joueurs[1].y = 300;
+    generation_joueurs();
     run = window.setInterval(maj,25);
 }
+
 document.addEventListener("DOMContentLoaded", function() {
     map = devMap;
-    joueurs = [creation_joueur('orange',300,300), creation_joueur('blue',600,300)];
+
+    //tests socket.io
+    socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
+    socket.on('connect', function() {
+        socket.emit('joined', {});
+    });
+    socket.on('j', function(data) {
+        if(joueurs[data.id].distant){
+            joueurs[data.id].teleportation(data.x,data.y,data.angle)
+        }
+    });
+    socket.on('tir', function(data) {
+        if(joueurs[data.id].distant){
+            projectiles.push(new projectile(data.x,data.y,data.angle));
+        }
+    });
+
     showMenu();
 
 });
