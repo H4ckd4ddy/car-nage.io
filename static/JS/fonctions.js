@@ -19,34 +19,28 @@ function generation_joueurs() {
 //Fonction qui verifie les touches actuellement utilsées (presente dans le tableau "touches")
 //et execution de la fonction correspondante
 function deplacements_joueurs(){
-	
-	for(var i = 0;i < joueurs.length;i++){
 
-        if(!joueurs[i].distant){
-            
-            if(touches.indexOf(joueurs[i].touche_gauche) >= 0){
-    			joueurs[i].rotation_gauche();
-    		}
-    		
-    		if(touches.indexOf(joueurs[i].touche_droite) >= 0){
-    			joueurs[i].rotation_droite();
-    		}
-    		
-    		if(touches.indexOf(joueurs[i].touche_haut) >= 0){
-    			joueurs[i].avancer();
-    		}
-    		
-    		if(touches.indexOf(joueurs[i].touche_bas) >= 0){
-    			joueurs[i].reculer();
-    		}
-    		
-    		if(touches.indexOf(joueurs[i].touche_tir) >= 0){
-    			joueurs[i].tir();
-    		}
-
-        }
-		
-	}
+    joueur_local = joueurs[id_joureur_local];
+    
+    if(touches.indexOf(joueur_local.touche_gauche) >= 0){
+    	joueur_local.rotation_gauche();
+    }
+    
+    if(touches.indexOf(joueur_local.touche_droite) >= 0){
+    	joueur_local.rotation_droite();
+    }
+    
+    if(touches.indexOf(joueur_local.touche_haut) >= 0){
+    	joueur_local.avancer();
+    }
+    
+    if(touches.indexOf(joueur_local.touche_bas) >= 0){
+    	joueur_local.reculer();
+    }
+    
+    if(touches.indexOf(joueur_local.touche_tir) >= 0){
+    	joueur_local.tir();
+    }
 	
 }
 
@@ -57,7 +51,7 @@ function affichageJoueurs(){
 		
 		if(joueurs[i].status !== 'mort') {
             var img = new Image();
-            img.src = 'img/voiture' + (i + 1) + '.png';
+            img.src = '/img/voiture' + (i + 1) + '.png';
             context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
             context.translate(joueurs[i].x, joueurs[i].y);
@@ -80,12 +74,11 @@ function deplacements_projectiles(){
 
 }
 
-
 function affichageProjectiles(){
     for(var i = 0; i < projectiles.length; i++) {
 		
         var imgBall = new Image();
-        imgBall.src = 'img/ball.png';
+        imgBall.src = '/img/ball.png';
         context.save();
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.translate(projectiles[i].x,projectiles[i].y);
@@ -93,8 +86,6 @@ function affichageProjectiles(){
         context.restore();
     }
 }
-
-
 
 function maj(){
     context.clearRect(0,0,wCan,hCan);
@@ -109,7 +100,7 @@ function explosion(x,y) {
     var test;
     test = setInterval(function () {
         var img = new Image();
-        img.src = 'img/explosion.png';
+        img.src = '/img/explosion.png';
         context.save();
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.translate(x,y);
@@ -118,11 +109,11 @@ function explosion(x,y) {
     },10);
     var temp = nbAlea(0,2);
     if(temp === 1) {
-        son.setAttribute('src', 'son/explosion.wav');
+        son.setAttribute('src', '/son/explosion.wav');
     }else if(temp === 2){
-        son.setAttribute('src', 'son/explosion1.wav');
+        son.setAttribute('src', '/son/explosion1.wav');
     }else{
-        son.setAttribute('src', 'son/explosion2.wav');
+        son.setAttribute('src', '/son/explosion2.wav');
     }
     son.play();
     setTimeout(function(){clearInterval(test)}, 400);

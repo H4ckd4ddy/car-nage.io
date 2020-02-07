@@ -29,11 +29,11 @@ var joueur = function(id, x, y, angle=0) {
 	this.dernier_tir = 0;
 	
 	//codes des touches pour ce joueur
-	this.touche_haut = touche_haut_standard[id];
-	this.touche_bas = touche_bas_standard[id];
-	this.touche_gauche = touche_gauche_standard[id];
-	this.touche_droite = touche_droite_standard[id];
-	this.touche_tir = touche_tir_standard[id];
+	this.touche_haut = touche_haut_standard[0];
+	this.touche_bas = touche_bas_standard[0];
+	this.touche_gauche = touche_gauche_standard[0];
+	this.touche_droite = touche_droite_standard[0];
+	this.touche_tir = touche_tir_standard[0];
 
 	this.teleportation = function(x,y,angle) {
 		this.x = x;

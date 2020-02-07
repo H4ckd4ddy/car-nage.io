@@ -17,7 +17,15 @@ socketio.init_app(app)
 
 @socketio.on('joined', namespace='/game')
 def joined(message):
-    join_room(session.get('room'))
+    room = session.get('room')
+    join_room(room)
+    emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
+    if ROOMS[room]['players'] == ROOMS[room]['places']:
+        for i in reversed(range(1,6)):
+            print(i)
+            emit('info', {'message': str(i)}, room=room)
+            socketio.sleep(1)
+        emit('start', {}, room=room)
 
 
 @socketio.on('j', namespace='/game')
@@ -49,16 +57,17 @@ def new(places):
     ROOMS[room_id]['places'] = places
     ROOMS[room_id]['players'] = 0
     ROOMS[room_id]['status'] = 'waiting'
-    return redirect("/"+room_id, code=302)
+    return redirect("/game/"+room_id, code=302)
 
-@app.route('/<string:room>', methods=['GET'])
+@app.route('/game/<string:room>', methods=['GET'])
 def game(room):
     session['room'] = room
+    print(session)
     if room not in ROOMS:
         return 'Game not found', 404
     if ROOMS[room]['players'] >= ROOMS[room]['places']:
         return 'Game full', 401
-    if not session.get('player_id'):
+    if 'player_id' not in session:
         session['player_id'] = ROOMS[room]['players']
         ROOMS[room]['players'] += 1
     return render_template('game.html', player_id=session.get('player_id'), places=ROOMS[room]['places'])

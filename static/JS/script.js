@@ -1,3 +1,5 @@
+var socket;
+
 /* variables globales */
 var hauteur = 800;
 var largeur = 800;
@@ -8,6 +10,13 @@ document.getElementById("background").style.height = hauteur+"px";
 document.getElementById("background").style.width = largeur+"px";
 
 emplacements_joueurs = [[50,70,180],[750,730,0],[750,70,180],[50,730,0]];
+
+/* liste des codes des touche de jeu par defaut [fleches,zqsd] */
+var touche_haut_standard = [38,90];
+var touche_bas_standard = [40,83];
+var touche_gauche_standard = [37,81];
+var touche_droite_standard = [39,68];
+var touche_tir_standard = [18,65];
 
 
 var vitesse_deplacement_standard = 10;
@@ -21,9 +30,6 @@ var diametreProjectile = 5;
 
 var joueurs = [];
 var projectiles = [];
-
-
-var socket;
 
 
 //On prend le contexte 2d du canvas
@@ -40,19 +46,6 @@ function affichageMurs(array) {
         context.fillRect(array[i].rectX, array[i].rectY, array[i].w, array[i].h);
     }
 }
-
-//Action des boutons
-document.getElementById('btnNewGame').onclick = function () {
-    map = devMap;
-    new_game();
-};
-
-/* liste des codes des touche de jeu par defaut [joueur1,joueur2] */
-var touche_haut_standard = [38,90];
-var touche_bas_standard = [40,83];
-var touche_gauche_standard = [37,81];
-var touche_droite_standard = [39,68];
-var touche_tir_standard = [18,65];
 
 /* Tableau stockant les touches en cours d'appui */
 var touches = [];
@@ -74,10 +67,6 @@ document.addEventListener("keyup", function(event){
 /* Initialisation, a la fin du chargement du DOM */
 
 function new_game() {
-    //document.getElementById('btnNewGame').setAttribute('hidden', 'true');
-    //clearInterval(menuLoop);
-    //clearInterval(autoPilotLoop);
-    //clearInterval(nbAleaPilotLoop);
     clearInterval(run);
     projectiles = [];
     touches = [];
@@ -88,14 +77,13 @@ function new_game() {
 document.addEventListener("DOMContentLoaded", function() {
     map = devMap;
 
-    //tests socket.io
     socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
     socket.on('connect', function() {
         socket.emit('joined', {});
     });
     socket.on('j', function(data) {
         if(joueurs[data.id].distant){
-            joueurs[data.id].teleportation(data.x,data.y,data.angle)
+            joueurs[data.id].teleportation(data.x,data.y,data.angle);
         }
     });
     socket.on('tir', function(data) {
@@ -103,7 +91,13 @@ document.addEventListener("DOMContentLoaded", function() {
             projectiles.push(new projectile(data.x,data.y,data.angle));
         }
     });
+    socket.on('info', function(data) {
+        waiting_screen(data.message);
+    });
+    socket.on('start', function(data) {
+        new_game();
+    });
 
-    showMenu();
+    waiting_screen("Merci de patienter...")
 
 });

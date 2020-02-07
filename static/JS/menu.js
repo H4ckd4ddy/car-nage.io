@@ -1,30 +1,31 @@
+
 var menuMap = [];
-var menuLoop;
-var nbAleaPilotLoop;
-var autoPilotLoop;
-var tempo = [50,50];
 bordureMap(menuMap);
 
-function showMenu() {
-    clearInterval(run);
-    document.getElementById('btnNewGame').removeAttribute('hidden');
-    frameMenu()
-}
+/*function countdown(duree=3){
+    if(duree > 0){
+        console.log(duree)
+        waiting_screen(duree);
+        window.setTimeout(function(){
+            countdown(duree-1);
+        }, 1000);
+    }else{
+        new_game();
+    }
+}*/
 
-function frameMenu() {
+function waiting_screen(msg='') {
 	
     affichageMurs(menuMap);
-    affichageJoueurs();
     
     var logo = new Image();
-    logo.src = 'img/logo.png';
+    logo.src = '/img/logo.png';
 
-    context.save();
+    
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.drawImage(logo, 200, 200, 400, 400);
-    context.restore();
     
-    context.font = '20px Verdana';
-    context.fillText(joueurs[0].score + '/' + joueurs[1].score, 50, 100);
-
+    context.font = '30px Verdana';
+    context.textAlign = 'center';
+    context.fillText(msg, 400, 650);
 }
