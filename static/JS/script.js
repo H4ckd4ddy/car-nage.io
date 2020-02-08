@@ -69,9 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
     map = devMap;
 
     socket = io.connect(document.location.protocol+'//'+document.domain+':'+location.port+'/game');
-    socket.on('connect', function() {
-        socket.emit('joined', {});
-    });
+    
     socket.on('j', function(data) {
         if(joueurs[data[0]].distant){
             joueurs[data[0]].teleportation(data[1],data[2],data[3]);

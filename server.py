@@ -21,8 +21,8 @@ socketio = SocketIO(app, async_mode='eventlet')
 
 #socketio.init_app(app)
 
-@socketio.on('joined', namespace='/game')
-def joined(message):
+@socketio.on('connect', namespace='/game')
+def joined():
     room = session.get('room')
     join_room(room)
     emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
@@ -65,12 +65,6 @@ def disconnect():
     if room in ROOMS:
         del ROOMS[room]
     emit('disconnect', {}, room=room)
-
-#@socketio.on('left', namespace='/game')
-#def left(message):
-#    game = session.get('room')
-#    leave_room(game)
-#    emit('status', {'msg': session.get('name') + ' has left the room.'}, room=game)
 
 @app.route('/', methods=['GET'])
 def index():
