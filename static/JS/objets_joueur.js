@@ -326,8 +326,8 @@ var projectile = function(x, y, angle) {
 				setTimeout(function () {
                     run.stop()
                     
-                    joueurs[i].score += 1;
-                    console.log('joueur '+i+' scored');
+                    //joueurs[i].score += 1;
+                    //console.log('joueur '+i+' scored');
                     
                     waiting_screen("Merci de patienter...")
                     socket.emit('end', {});

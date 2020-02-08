@@ -4,6 +4,8 @@ import secrets
 import eventlet
 eventlet.monkey_patch()
 
+from map import *
+
 ROOMS = {}
 
 
@@ -33,15 +35,19 @@ def ready(message):
     ROOMS[room]['players_ready'] += 1
     emit('info', {'message': "Joueurs pret : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
     if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
+        emit('map', {'map': ROOMS[room]['map']}, room=room)
         for i in reversed(range(1,6)):
             emit('info', {'message': str(i)}, room=room)
             socketio.sleep(1)
+        ROOMS[room]['status'] = 'playing'
         emit('start', {}, room=room)
 
 @socketio.on('end', namespace='/game')
 def end(message):
     room = session.get('room')
-    if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
+    if ROOMS[room]['status'] == 'playing':
+        ROOMS[room]['status'] = 'wainting'
+        ROOMS[room]['map'] = generate_maze(9,9)
         ROOMS[room]['players_ready'] = 0
         emit('confirm', {'message': "Recommencer ?"}, room=room)
 
@@ -75,6 +81,7 @@ def new(places):
     ROOMS[room_id]['players'] = 0
     ROOMS[room_id]['status'] = 'waiting'
     ROOMS[room_id]['players_ready'] = 0
+    ROOMS[room_id]['map'] = (generate_maze(9,9))
     return redirect("/game/"+room_id, code=302)
 
 @app.route('/game/<string:room>', methods=['GET'])

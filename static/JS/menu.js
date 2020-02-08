@@ -1,6 +1,4 @@
 
-var menuMap = [];
-bordureMap(menuMap);
 
 /*function countdown(duree=3){
     if(duree > 0){
@@ -16,7 +14,7 @@ bordureMap(menuMap);
 
 function waiting_screen(msg='') {
 	
-    affichageMurs(menuMap);
+    affichageMurs(generate_empty_map());
     
     var logo = new Image();
     logo.src = '/img/logo.png';

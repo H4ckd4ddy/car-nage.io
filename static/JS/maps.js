@@ -1,36 +1,74 @@
 /* Fonction bordures de la map */
 
-function bordureMap(array) {
-    array[0] = new Mur('vertical', largeurMur/2, 0, hCan);
-    array[1] = new Mur('horizontal', 0, largeurMur/2, wCan);
-    array[2] = new Mur('vertical', hCan-(largeurMur/2), 0, hCan);
-    array[3] = new Mur('horizontal', 0, wCan-(largeurMur/2), wCan);
+function generate_empty_map() {
+    let map = [];
+    map[0] = new Mur('vertical', largeurMur/2, 0, hCan);
+    map[1] = new Mur('horizontal', 0, largeurMur/2, wCan);
+    map[2] = new Mur('vertical', hCan-(largeurMur/2), 0, hCan);
+    map[3] = new Mur('horizontal', 0, wCan-(largeurMur/2), wCan);
+    return map;
 }
 
 /* Map de développement */
 
-var devMap = [];
-bordureMap(devMap);
+var devMap = generate_empty_map();
 
-//Labyrinthe de la map
-devMap[4] = new Mur('vertical', prct(50,'x'), 0, prct(50,'y'));
-devMap[5] = new Mur('horizontal', 0, prct(25,'y'), prct(25,'x'));
-devMap[6] = new Mur('horizontal', prct(20,'x'), prct(70, 'y'), prct(80,'x'));
+devMap[4] = new Mur('horizontal', prct(20,'x'), prct(20,'y'), prct(60,'x'));
+devMap[5] = new Mur('vertical', prct(80,'x'), prct(20,'y'), prct(40,'y'));
+devMap[6] = new Mur('vertical', prct(50,'x'), prct(40,'y'), prct(40,'y'));
+devMap[7] = new Mur('horizontal', prct(20,'x'), prct(80,'y'), prct(30,'x'));
 
-/* Map de dev */
 
-var devMap2 = [];
-bordureMap(devMap2);
+var test_schema = [['#','#','#','#','#','#','#','#','#'],
+                   ['#',' ',' ',' ',' ',' ',' ',' ','#'],
+                   ['#',' ','#','#','#',' ','#','#','#'],
+                   ['#',' ',' ',' ','#',' ',' ',' ','#'],
+                   ['#',' ','#',' ','#',' ','#',' ','#'],
+                   ['#',' ',' ',' ',' ',' ',' ',' ','#'],
+                   ['#',' ','#','#','#',' ','#',' ','#'],
+                   ['#',' ',' ',' ',' ',' ','#',' ','#'],
+                   ['#','#','#','#','#','#','#','#','#']];
 
-devMap2[4] = new Mur('horizontal', prct(20,'x'), prct(20,'y'), prct(60,'x'));
-devMap2[5] = new Mur('vertical', prct(80,'x'), prct(20,'y'), prct(40,'y'));
-devMap2[6] = new Mur('vertical', prct(50,'x'), prct(40,'y'), prct(40,'y'));
-devMap2[7] = new Mur('horizontal', prct(20,'x'), prct(80,'y'), prct(30,'x'));
+function generate_map_from_schema(schema){
+    let new_map = generate_empty_map();
+    let y_step = (hauteur/(schema.length-2));
+    let x_step = (largeur/(schema[0].length-2));
+    let y = 0;
+    console.log(schema);
+    for(let row = 1;row < schema.length-1;row++){
+        let x = 0;
+        for(let column = 1;column < schema[0].length-1;column++){
+            if(schema[row][column] == '#'){
+                if(schema[row][column+1] == '#'){
+                    new_map.push(new Mur('horizontal', x+(x_step/2), y+(y_step/2), (x_step/2)));
+                }
+                if(schema[row][column-1] == '#'){
+                    new_map.push(new Mur('horizontal', x, y+(y_step/2), (x_step/2)));
+                }
+
+                if(schema[row+1][column] == '#'){
+                    new_map.push(new Mur('vertical', x+(x_step/2), y+(y_step/2), (y_step/2)));
+                }
+                if(schema[row-1][column] == '#'){
+                    new_map.push(new Mur('vertical', x+(x_step/2), y, (y_step/2)));
+                }
+
+                //new_map.push(new Mur('horizontal', x, y+(y_step/2), x_step));
+                //new_map.push(new Mur('vertical', x+(x_step/2), y, y_step));
+            }
+            x += x_step;
+        }
+        y += y_step;
+    }
+    return new_map;
+}
+
 
 
 
 
 /* Générateur de map aléatoire */
+
 
 /*
 TODO : améliorer les règles pour les murs aléatoires
@@ -61,7 +99,7 @@ function coordoPossibles(object) {
     }
 }
 //La fonction de création de la map aléatoire V1
-function creationMapAleatoire() {
+/*function creationMapAleatoire() {
     console.log('***Génération de la map aléatoire***');
     mapAleatoire = [];
     coordoPossibles(aleaHorizontal);
@@ -87,7 +125,7 @@ function creationMapAleatoire() {
         mapAleatoire[i] = new Mur(orientation,x,y,l);
     }
     map = mapAleatoire;
-}
+}*/
 
 //Pourcentage des longueurs en fonction de l'axe
 function prct(x,axe){

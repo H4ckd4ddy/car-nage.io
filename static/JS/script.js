@@ -12,21 +12,21 @@ document.getElementById("background").style.width = largeur+"px";
 emplacements_joueurs = [[50,70,180],[750,730,0],[750,70,180],[50,730,0]];
 
 /* liste des codes des touche de jeu par defaut [fleches,zqsd] */
-var touche_haut_standard = [38,90];
-var touche_bas_standard = [40,83];
-var touche_gauche_standard = [37,81];
-var touche_droite_standard = [39,68];
-var touche_tir_standard = [18,65];
+const touche_haut_standard = [38,90];
+const touche_bas_standard = [40,83];
+const touche_gauche_standard = [37,81];
+const touche_droite_standard = [39,68];
+const touche_tir_standard = [18,65];
 
 
-var vitesse_deplacement_standard = 10;
-var vitesse_rotation_standard = 10;
-var delai_tir_standard = 1;
+const vitesse_deplacement_standard = 10;
+const vitesse_rotation_standard = 10;
+const delai_tir_standard = 1;
 
 
-var largeur_joueur = 40;
-var longueur_joueur = largeur_joueur*1.618033;
-var diametreProjectile = 5;
+const largeur_joueur = 40;
+const longueur_joueur = largeur_joueur*1.618033;
+const diametreProjectile = 5;
 
 var joueurs = [];
 var projectiles = [];
@@ -40,15 +40,6 @@ var canvas = document.getElementById("background"),
     context = canvas.getContext("2d"),
     hCan = parseFloat(canvas.getAttribute('height')),
     wCan = parseFloat(canvas.getAttribute('width'));
-
-//Fonction d'affichage des murs suivant la map
-function affichageMurs(array) {
-    context.clearRect(0,0,wCan,hCan);
-    context.fillStyle = 'black';
-    for(var i = 0; i < array.length; i++){
-        context.fillRect(array[i].rectX, array[i].rectY, array[i].w, array[i].h);
-    }
-}
 
 /* A l'appui d'une touche, on l'ajoute dans le tableau */
 document.addEventListener("keydown", function(event){
@@ -93,6 +84,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     socket.on('info', function(data) {
         waiting_screen(data.message);
+    });
+    socket.on('map', function(data) {
+        map = generate_map_from_schema(data.map);
     });
     socket.on('confirm', function(data) {
         alert(data.message);
