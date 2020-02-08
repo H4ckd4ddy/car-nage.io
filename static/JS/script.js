@@ -31,6 +31,9 @@ var diametreProjectile = 5;
 var joueurs = [];
 var projectiles = [];
 
+/* Tableau stockant les touches en cours d'appui */
+var touches = [];
+
 
 //On prend le contexte 2d du canvas
 var canvas = document.getElementById("background"),
@@ -46,9 +49,6 @@ function affichageMurs(array) {
         context.fillRect(array[i].rectX, array[i].rectY, array[i].w, array[i].h);
     }
 }
-
-/* Tableau stockant les touches en cours d'appui */
-var touches = [];
 
 /* A l'appui d'une touche, on l'ajoute dans le tableau */
 document.addEventListener("keydown", function(event){
@@ -67,11 +67,11 @@ document.addEventListener("keyup", function(event){
 /* Initialisation, a la fin du chargement du DOM */
 
 function new_game() {
-    clearInterval(run);
     projectiles = [];
     touches = [];
     generation_joueurs();
-    run = window.setInterval(maj,25);
+    run = new interval(25, maj)
+    run.run()
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -93,6 +93,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     socket.on('info', function(data) {
         waiting_screen(data.message);
+    });
+    socket.on('confirm', function(data) {
+        alert(data.message);
+        socket.emit('ready', {});
     });
     socket.on('start', function(data) {
         new_game();

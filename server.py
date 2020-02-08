@@ -1,10 +1,12 @@
 from flask import Flask, session, redirect, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import secrets
+import eventlet
+eventlet.monkey_patch()
 
 ROOMS = {}
 
-socketio = SocketIO()
+
 
 app = Flask(__name__,
             static_url_path='', 
@@ -13,7 +15,9 @@ app = Flask(__name__,
 
 app.config['SECRET_KEY'] = str(secrets.token_hex(32))
 
-socketio.init_app(app)
+socketio = SocketIO(app, async_mode='eventlet')
+
+#socketio.init_app(app)
 
 @socketio.on('joined', namespace='/game')
 def joined(message):
@@ -21,12 +25,25 @@ def joined(message):
     join_room(room)
     emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
     if ROOMS[room]['players'] == ROOMS[room]['places']:
+        emit('confirm', {'message': "Pret ?"}, room=room)
+
+@socketio.on('ready', namespace='/game')
+def ready(message):
+    room = session.get('room')
+    ROOMS[room]['players_ready'] += 1
+    emit('info', {'message': "Joueurs pret : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
+    if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
         for i in reversed(range(1,6)):
-            print(i)
             emit('info', {'message': str(i)}, room=room)
             socketio.sleep(1)
         emit('start', {}, room=room)
 
+@socketio.on('end', namespace='/game')
+def end(message):
+    room = session.get('room')
+    if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
+        ROOMS[room]['players_ready'] = 0
+        emit('confirm', {'message': "Recommencer ?"}, room=room)
 
 @socketio.on('j', namespace='/game')
 def move(message):
@@ -57,6 +74,7 @@ def new(places):
     ROOMS[room_id]['places'] = places
     ROOMS[room_id]['players'] = 0
     ROOMS[room_id]['status'] = 'waiting'
+    ROOMS[room_id]['players_ready'] = 0
     return redirect("/game/"+room_id, code=302)
 
 @app.route('/game/<string:room>', methods=['GET'])

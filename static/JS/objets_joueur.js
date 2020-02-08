@@ -324,7 +324,7 @@ var projectile = function(x, y, angle) {
 				
 				//delai d'attente pour verifier que le joueur ne va pas mourir
 				setTimeout(function () {
-                    clearInterval(run);
+                    run.stop()
                     if (joueurs[0].status === 'mort' && joueurs[1].status !== 'mort') {
                         joueurs[1].score += 1;
                         console.log('joueur 2 scored');
@@ -332,7 +332,8 @@ var projectile = function(x, y, angle) {
                         joueurs[0].score += 1;
                         console.log('joueur 1 scored');
                     }
-                    showMenu();
+                    waiting_screen("Merci de patienter...")
+                    socket.emit('end', {});
                 }, 3000);
 				
 			}
