@@ -22,10 +22,14 @@ function action_handler(event){
 
 function waiting_screen(msg='', need_action=false) {
 
+    if(run){
+       run.stop();
+    }
+
     if(lock_screen){
         return;
     }
-	
+
     affichageMurs(generate_empty_map());
     
     var logo = new Image();

@@ -128,6 +128,7 @@ function explosion(x,y) {
 }
 
 function interval(duration, fn){
+    
     this.baseline = undefined
     
     this.run = function(){
