@@ -42,7 +42,7 @@ var joueur = function(id, x, y, angle=0) {
 	};
 
 	this.envoyer_position = function() {
-		socket.emit('j', {'id':Math.round(this.id),'x':Math.round(this.x),'y':Math.round(this.y),'angle':Math.round(this.angle)});
+		socket.emit('j', [Math.round(this.id),Math.round(this.x),Math.round(this.y),Math.round(this.angle)]);
 	}
 
 	this.rotation_gauche = function() {
@@ -325,13 +325,10 @@ var projectile = function(x, y, angle) {
 				//delai d'attente pour verifier que le joueur ne va pas mourir
 				setTimeout(function () {
                     run.stop()
-                    if (joueurs[0].status === 'mort' && joueurs[1].status !== 'mort') {
-                        joueurs[1].score += 1;
-                        console.log('joueur 2 scored');
-                    } else if (joueurs[1].status === 'mort' && joueurs[0].status !== 'mort'){
-                        joueurs[0].score += 1;
-                        console.log('joueur 1 scored');
-                    }
+                    
+                    joueurs[i].score += 1;
+                    console.log('joueur '+i+' scored');
+                    
                     waiting_screen("Merci de patienter...")
                     socket.emit('end', {});
                 }, 3000);

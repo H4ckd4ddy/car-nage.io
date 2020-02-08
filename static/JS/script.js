@@ -70,7 +70,7 @@ function new_game() {
     projectiles = [];
     touches = [];
     generation_joueurs();
-    run = new interval(25, maj)
+    run = new interval(30, maj)
     run.run()
 }
 
@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function() {
         socket.emit('joined', {});
     });
     socket.on('j', function(data) {
-        if(joueurs[data.id].distant){
-            joueurs[data.id].teleportation(data.x,data.y,data.angle);
+        if(joueurs[data[0]].distant){
+            joueurs[data[0]].teleportation(data[1],data[2],data[3]);
         }
     });
     socket.on('tir', function(data) {
