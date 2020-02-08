@@ -21,7 +21,7 @@ socketio = SocketIO(app, async_mode='eventlet')
 
 #socketio.init_app(app)
 
-@socketio.on('connect', namespace='/game')
+@socketio.on('connect')
 def joined():
     room = session.get('room')
     join_room(room)
@@ -29,7 +29,7 @@ def joined():
     if ROOMS[room]['players'] == ROOMS[room]['places']:
         emit('confirm', {'message': "Pret ? (cliquez pour confirmer)"}, room=room)
 
-@socketio.on('ready', namespace='/game')
+@socketio.on('ready')
 def ready(message):
     room = session.get('room')
     ROOMS[room]['players_ready'] += 1
@@ -42,7 +42,7 @@ def ready(message):
         ROOMS[room]['status'] = 'playing'
         emit('start', {}, room=room)
 
-@socketio.on('end', namespace='/game')
+@socketio.on('end')
 def end(message):
     room = session.get('room')
     if ROOMS[room]['status'] == 'playing':
@@ -51,15 +51,15 @@ def end(message):
         ROOMS[room]['players_ready'] = 0
         emit('confirm', {'message': "Recommencer ? (cliquez pour confirmer)"}, room=room)
 
-@socketio.on('j', namespace='/game')
+@socketio.on('j')
 def move(message):
     emit('j', message, room=session.get('room'))
 
-@socketio.on('tir', namespace='/game')
+@socketio.on('tir')
 def tir(message):
     emit('tir', message, room=session.get('room'))
 
-@socketio.on('disconnect', namespace='/game')
+@socketio.on('disconnect')
 def disconnect():
     room = session.get('room')
     if room in ROOMS:
