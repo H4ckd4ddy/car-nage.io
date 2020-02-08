@@ -89,11 +89,17 @@ document.addEventListener("DOMContentLoaded", function() {
         map = generate_map_from_schema(data.map);
     });
     socket.on('confirm', function(data) {
-        alert(data.message);
-        socket.emit('ready', {});
+        waiting_screen(data.message, true);
     });
     socket.on('start', function(data) {
         new_game();
+    });
+    socket.on('disconnect', function(data) {
+        run.stop();
+        waiting_screen("Un joueur s'est deconnecté, fin de partie");
+        window.setTimeout(function(){
+            document.location = '/';
+        }, 2000);
     });
 
     waiting_screen("Merci de patienter...")

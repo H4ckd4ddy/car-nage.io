@@ -12,7 +12,19 @@
     }
 }*/
 
-function waiting_screen(msg='') {
+var lock_screen = false;
+
+function action_handler(event){
+    document.removeEventListener("click", action_handler);
+    lock_screen = false;
+    socket.emit('ready', {});
+}
+
+function waiting_screen(msg='', need_action=false) {
+
+    if(lock_screen){
+        return;
+    }
 	
     affichageMurs(generate_empty_map());
     
@@ -26,4 +38,9 @@ function waiting_screen(msg='') {
     context.font = '30px Verdana';
     context.textAlign = 'center';
     context.fillText(msg, 400, 650);
+
+    if(need_action){
+        lock_screen = true;
+        document.addEventListener("click", action_handler);
+    }
 }

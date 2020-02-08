@@ -59,6 +59,12 @@ def move(message):
 def tir(message):
     emit('tir', message, room=session.get('room'))
 
+@socketio.on('disconnect', namespace='/game')
+def disconnect():
+    room = session.get('room')
+    if room in ROOMS:
+        del ROOMS[room]
+    emit('disconnect', {}, room=room)
 
 #@socketio.on('left', namespace='/game')
 #def left(message):
@@ -87,14 +93,12 @@ def new(places):
 @app.route('/game/<string:room>', methods=['GET'])
 def game(room):
     session['room'] = room
-    print(session)
     if room not in ROOMS:
         return 'Game not found', 404
     if ROOMS[room]['players'] >= ROOMS[room]['places']:
         return 'Game full', 401
-    if 'player_id' not in session:
-        session['player_id'] = ROOMS[room]['players']
-        ROOMS[room]['players'] += 1
+    session['player_id'] = ROOMS[room]['players']
+    ROOMS[room]['players'] += 1
     return render_template('game.html', player_id=session.get('player_id'), places=ROOMS[room]['places'])
 
 socketio.run(app=app, debug=True, host='0.0.0.0', port=80)
