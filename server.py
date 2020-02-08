@@ -27,13 +27,13 @@ def joined(message):
     join_room(room)
     emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
     if ROOMS[room]['players'] == ROOMS[room]['places']:
-        emit('confirm', {'message': "Pret ?"}, room=room)
+        emit('confirm', {'message': "Pret ? (cliquez pour confirmer)"}, room=room)
 
 @socketio.on('ready', namespace='/game')
 def ready(message):
     room = session.get('room')
     ROOMS[room]['players_ready'] += 1
-    emit('info', {'message': "Joueurs pret : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
+    emit('info', {'message': "Joueurs prets : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
     if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
         emit('map', {'map': ROOMS[room]['map']}, room=room)
         for i in reversed(range(1,6)):
@@ -49,7 +49,7 @@ def end(message):
         ROOMS[room]['status'] = 'wainting'
         ROOMS[room]['map'] = generate_maze(9,9)
         ROOMS[room]['players_ready'] = 0
-        emit('confirm', {'message': "Recommencer ?"}, room=room)
+        emit('confirm', {'message': "Recommencer ? (cliquez pour confirmer)"}, room=room)
 
 @socketio.on('j', namespace='/game')
 def move(message):
