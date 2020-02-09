@@ -94,7 +94,7 @@ def random():
         ROOMS[room_id]['players'] = 0
         ROOMS[room_id]['status'] = 'waiting'
         ROOMS[room_id]['players_ready'] = 0
-        ROOMS[room_id]['map'] = (generate_maze(13,13))
+        ROOMS[room_id]['map'] = (generate_maze(9,9))
         PUBLIC_ROOMS.append(room_id)
         return redirect("/game/"+room_id, code=302)
 
