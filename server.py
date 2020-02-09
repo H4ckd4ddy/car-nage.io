@@ -23,13 +23,9 @@ def joined():
     room = session.get('room')
     if room in ROOMS:
         join_room(room)
-        ##no
-        emit('map', {'map': ROOMS[room]['map']}, room=room)
-        emit('start', {}, room=room)
-        ##no
-        #emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
-        #if ROOMS[room]['players'] == ROOMS[room]['places']:
-        #    emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
+        emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
+        if ROOMS[room]['players'] == ROOMS[room]['places']:
+            emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
 
 @socketio.on('ready')
 def ready(message):
