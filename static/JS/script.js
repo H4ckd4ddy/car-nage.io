@@ -3,13 +3,14 @@ var socket;
 /* variables globales */
 var hauteur = 800;
 var largeur = 800;
+var largeur_mur = 10;
 var map = [];
 var run;
 var son = document.getElementById('son');
 document.getElementById("background").style.height = hauteur+"px";
 document.getElementById("background").style.width = largeur+"px";
 
-emplacements_joueurs = [[50,70,180],[750,730,0],[750,70,180],[50,730,0]];
+emplacements_joueurs = [[50,50,135],[750,750,315],[750,50,225],[50,750,45]];
 
 /* liste des codes des touche de jeu par defaut [fleches,zqsd] */
 const touche_haut_standard = [38,90];

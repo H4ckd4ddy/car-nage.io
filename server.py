@@ -21,32 +21,35 @@ socketio = SocketIO(app, async_mode='eventlet')
 @socketio.on('connect')
 def joined():
     room = session.get('room')
-    join_room(room)
-    emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
-    if ROOMS[room]['players'] == ROOMS[room]['places']:
-        emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
+    if room in ROOMS:
+        join_room(room)
+        emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
+        if ROOMS[room]['players'] == ROOMS[room]['places']:
+            emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
 
 @socketio.on('ready')
 def ready(message):
     room = session.get('room')
-    ROOMS[room]['players_ready'] += 1
-    emit('info', {'message': "Joueurs prets : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
-    if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
-        emit('map', {'map': ROOMS[room]['map']}, room=room)
-        for i in reversed(range(1,6)):
-            emit('info', {'message': str(i)}, room=room)
-            socketio.sleep(1)
-        ROOMS[room]['status'] = 'playing'
-        emit('start', {}, room=room)
+    if room in ROOMS:
+        ROOMS[room]['players_ready'] += 1
+        emit('info', {'message': "Joueurs prets : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
+        if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
+            emit('map', {'map': ROOMS[room]['map']}, room=room)
+            for i in reversed(range(1,6)):
+                emit('info', {'message': str(i)}, room=room)
+                socketio.sleep(1)
+            ROOMS[room]['status'] = 'playing'
+            emit('start', {}, room=room)
 
 @socketio.on('end')
 def end(message):
     room = session.get('room')
-    if ROOMS[room]['status'] == 'playing':
-        ROOMS[room]['status'] = 'wainting'
-        ROOMS[room]['map'] = generate_maze(9,9)
-        ROOMS[room]['players_ready'] = 0
-        emit('confirm', {'message': "Recommencer ? (pressez une touche)"}, room=room)
+    if room in ROOMS:
+        if ROOMS[room]['status'] == 'playing':
+            ROOMS[room]['status'] = 'wainting'
+            ROOMS[room]['map'] = generate_maze(9,9)
+            ROOMS[room]['players_ready'] = 0
+            emit('confirm', {'message': "Recommencer ? (pressez une touche)"}, room=room)
 
 @socketio.on('j')
 def move(message):

@@ -322,16 +322,30 @@ var projectile = function(x, y, angle) {
                 projectiles.splice(this.id, 0, 'explosé');
                 projectiles.splice(this.id+1, 1);
 				
-				//delai d'attente pour verifier que le joueur ne va pas mourir
-				setTimeout(function () {
-                    run.stop()
-                    
-                    //joueurs[i].score += 1;
-                    //console.log('joueur '+i+' scored');
-                    
-                    waiting_screen("Merci de patienter...")
-                    socket.emit('end', {});
-                }, 3000);
+				var joueurs_restants = [];
+                for(let j = 0;j < joueurs.length;j++){
+                	if(joueurs[j].status != 'mort'){
+                		joueurs_restants.push(joueurs[j]);
+					}
+                }
+
+                if(joueurs_restants.length <= 1){
+                	
+                	(function(joueurs_restants){
+                		//delai d'attente pour verifier que le joueur ne va pas mourir
+						setTimeout(function () {
+		                    run.stop()
+		                    if(joueurs_restants.length == 1){
+		                    	waiting_screen("Victoire d'un joueur inconnue")
+		                    }else{
+		                    	waiting_screen("Match nul")
+		                    }
+		                }, 3000);
+		                setTimeout(function () {
+		                	socket.emit('end', {});
+		                }, 6000);
+		            })(joueurs_restants);
+				}
 				
 			}
 			

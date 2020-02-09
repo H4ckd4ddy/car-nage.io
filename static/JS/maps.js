@@ -2,10 +2,10 @@
 
 function generate_empty_map() {
     let map = [];
-    map[0] = new Mur('vertical', largeurMur/2, 0, hCan);
-    map[1] = new Mur('horizontal', 0, largeurMur/2, wCan);
-    map[2] = new Mur('vertical', hCan-(largeurMur/2), 0, hCan);
-    map[3] = new Mur('horizontal', 0, wCan-(largeurMur/2), wCan);
+    map[0] = new Mur('vertical', largeur_mur/2, 0, hCan);
+    map[1] = new Mur('horizontal', 0, largeur_mur/2, wCan);
+    map[2] = new Mur('vertical', hCan-(largeur_mur/2), 0, hCan);
+    map[3] = new Mur('horizontal', 0, wCan-(largeur_mur/2), wCan);
     return map;
 }
 
@@ -31,10 +31,10 @@ function generate_map_from_schema(schema){
         y = (row*y_step)-(y_step/2);
         for(let column = 0;column < schema[0].length-1;column++){
             if(schema[row][column] == '#'){
-                x = (column*x_step)-(x_step/2);
-                size = 0;
+                x = (column*x_step)-(x_step/2)-(largeur_mur/2);
+                size = largeur_mur;
                 block_count = 1;
-                while(schema[row][column+block_count] == '#'){
+                while((schema[row][column+block_count] == '#')&&(column+block_count < schema[0].length)){
                     block_count++;
                     size += x_step;
                 }
@@ -50,10 +50,10 @@ function generate_map_from_schema(schema){
         x = (column*x_step)-(x_step/2);
         for(let row = 0;row < schema.length-1;row++){
             if(schema[row][column] == '#'){
-                y = (row*y_step)-(y_step/2);
-                size = 0;
+                y = (row*y_step)-(y_step/2)-(largeur_mur/2);
+                size = largeur_mur;
                 block_count = 1;
-                while(schema[row+block_count][column] == '#'){
+                while((schema[row+block_count][column] == '#')&&(row+block_count < schema.length)){
                     block_count++;
                     size += y_step;
                 }
