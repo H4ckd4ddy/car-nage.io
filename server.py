@@ -61,6 +61,8 @@ def disconnect():
     room = session.get('room')
     if room in ROOMS:
         del ROOMS[room]
+    if room in PUBLIC_ROOMS:
+        PUBLIC_ROOMS.remove(room)
     emit('disconnect', {}, room=room)
 
 @app.route('/', methods=['GET'])
