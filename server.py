@@ -7,8 +7,7 @@ eventlet.monkey_patch()
 from map import *
 
 ROOMS = {}
-
-
+PUBLIC_ROOMS = []
 
 app = Flask(__name__,
             static_url_path='', 
@@ -18,8 +17,6 @@ app = Flask(__name__,
 app.config['SECRET_KEY'] = str(secrets.token_hex(32))
 
 socketio = SocketIO(app, async_mode='eventlet')
-
-#socketio.init_app(app)
 
 @socketio.on('connect')
 def joined():
@@ -71,6 +68,7 @@ def index():
     response = ""
     for i in range(2,5):
         response += "<a href='/new/{}'>{} joueurs</a><br/>".format(i,i)
+    response += "<a href='/new/random'>Random</a><br/>"
     return response
 
 @app.route('/new/<int:places>', methods=['GET'])
@@ -83,6 +81,21 @@ def new(places):
     ROOMS[room_id]['players_ready'] = 0
     ROOMS[room_id]['map'] = (generate_maze(9,9))
     return redirect("/game/"+room_id, code=302)
+
+@app.route('/new/random', methods=['GET'])
+def random():
+    if len(PUBLIC_ROOMS) > 0:
+        return redirect("/game/"+PUBLIC_ROOMS.pop(), code=302)
+    else:
+        room_id = str(secrets.token_hex(2))
+        ROOMS[room_id] = {}
+        ROOMS[room_id]['places'] = 2
+        ROOMS[room_id]['players'] = 0
+        ROOMS[room_id]['status'] = 'waiting'
+        ROOMS[room_id]['players_ready'] = 0
+        ROOMS[room_id]['map'] = (generate_maze(9,9))
+        PUBLIC_ROOMS.append(room_id)
+        return redirect("/game/"+room_id, code=302)
 
 @app.route('/game/<string:room>', methods=['GET'])
 def game(room):

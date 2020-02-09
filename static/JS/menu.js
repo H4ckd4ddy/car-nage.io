@@ -1,17 +1,3 @@
-
-
-/*function countdown(duree=3){
-    if(duree > 0){
-        console.log(duree)
-        waiting_screen(duree);
-        window.setTimeout(function(){
-            countdown(duree-1);
-        }, 1000);
-    }else{
-        new_game();
-    }
-}*/
-
 var lock_screen = false;
 
 function action_handler(event){
