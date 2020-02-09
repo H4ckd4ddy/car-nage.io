@@ -23,9 +23,13 @@ def joined():
     room = session.get('room')
     if room in ROOMS:
         join_room(room)
-        emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
-        if ROOMS[room]['players'] == ROOMS[room]['places']:
-            emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
+        ##no
+        emit('map', {'map': ROOMS[room]['map']}, room=room)
+        emit('start', {}, room=room)
+        ##no
+        #emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
+        #if ROOMS[room]['players'] == ROOMS[room]['places']:
+        #    emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
 
 @socketio.on('ready')
 def ready(message):
@@ -94,7 +98,7 @@ def random():
         ROOMS[room_id]['players'] = 0
         ROOMS[room_id]['status'] = 'waiting'
         ROOMS[room_id]['players_ready'] = 0
-        ROOMS[room_id]['map'] = (generate_maze(9,9))
+        ROOMS[room_id]['map'] = (generate_maze(13,13))
         PUBLIC_ROOMS.append(room_id)
         return redirect("/game/"+room_id, code=302)
 

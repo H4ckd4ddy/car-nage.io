@@ -21,20 +21,21 @@ devMap[7] = new Mur('horizontal', prct(20,'x'), prct(80,'y'), prct(30,'x'));
 
 
 function generate_map_from_schema(schema){
-    let new_map = generate_empty_map();
-    let y_step = (hauteur/(schema.length-2));
-    let x_step = (largeur/(schema[0].length-2));
+    let new_map = [];
+    let y_step = ((hauteur-largeur_mur)/(schema.length-1));
+    let x_step = ((largeur-largeur_mur)/(schema[0].length-1));
     let x,y,size,block_count = 0;
     console.log(schema);
+    console.log(x_step);
     //generate horizontal wall
-    for(let row = 1;row < schema.length-1;row++){
-        y = (row*y_step)-(y_step/2);
+    for(let row = 0;row < schema.length;row++){
+        y = (row*y_step)+(largeur_mur/2);
         for(let column = 0;column < schema[0].length-1;column++){
             if(schema[row][column] == '#'){
-                x = (column*x_step)-(x_step/2)-(largeur_mur/2);
+                x = (column*x_step);
                 size = largeur_mur;
                 block_count = 1;
-                while((schema[row][column+block_count] == '#')&&(column+block_count < schema[0].length)){
+                while(schema[row][column+block_count] == '#'){
                     block_count++;
                     size += x_step;
                 }
@@ -46,14 +47,14 @@ function generate_map_from_schema(schema){
         }
     }
     //generate vertical wall
-    for(let column = 1;column < schema[0].length-1;column++){
-        x = (column*x_step)-(x_step/2);
+    for(let column = 0;column < schema[0].length;column++){
+        x = (column*x_step)+(largeur_mur/2);
         for(let row = 0;row < schema.length-1;row++){
             if(schema[row][column] == '#'){
-                y = (row*y_step)-(y_step/2)-(largeur_mur/2);
+                y = (row*y_step);
                 size = largeur_mur;
                 block_count = 1;
-                while((schema[row+block_count][column] == '#')&&(row+block_count < schema.length)){
+                while((schema[row+block_count])&&(schema[row+block_count][column] == '#')){
                     block_count++;
                     size += y_step;
                 }
@@ -64,6 +65,7 @@ function generate_map_from_schema(schema){
             }
         }
     }
+    console.log(new_map);
     return new_map;
 }
 
