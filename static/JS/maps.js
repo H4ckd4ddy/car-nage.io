@@ -24,32 +24,45 @@ function generate_map_from_schema(schema){
     let new_map = generate_empty_map();
     let y_step = (hauteur/(schema.length-2));
     let x_step = (largeur/(schema[0].length-2));
-    let y = 0;
+    let x,y,size,block_count = 0;
     console.log(schema);
+    //generate horizontal wall
     for(let row = 1;row < schema.length-1;row++){
-        let x = 0;
-        for(let column = 1;column < schema[0].length-1;column++){
+        y = (row*y_step)-(y_step/2);
+        for(let column = 0;column < schema[0].length-1;column++){
             if(schema[row][column] == '#'){
-                if(schema[row][column+1] == '#'){
-                    new_map.push(new Mur('horizontal', x+(x_step/2)-5, y+(y_step/2), (x_step/2)+10));
+                x = (column*x_step)-(x_step/2);
+                size = 0;
+                block_count = 1;
+                while(schema[row][column+block_count] == '#'){
+                    block_count++;
+                    size += x_step;
                 }
-                if(schema[row][column-1] == '#'){
-                    new_map.push(new Mur('horizontal', x-5, y+(y_step/2), (x_step/2)+10));
+                if(block_count > 1){
+                    new_map.push(new Mur('horizontal', x, y, size));
                 }
-
-                if(schema[row+1][column] == '#'){
-                    new_map.push(new Mur('vertical', x+(x_step/2), y+(y_step/2)-5, (y_step/2)+10));
-                }
-                if(schema[row-1][column] == '#'){
-                    new_map.push(new Mur('vertical', x+(x_step/2), y-5, (y_step/2)+10));
-                }
-
-                //new_map.push(new Mur('horizontal', x, y+(y_step/2), x_step));
-                //new_map.push(new Mur('vertical', x+(x_step/2), y, y_step));
+                column += block_count;
             }
-            x += x_step;
         }
-        y += y_step;
+    }
+    //generate vertical wall
+    for(let column = 1;column < schema[0].length-1;column++){
+        x = (column*x_step)-(x_step/2);
+        for(let row = 0;row < schema.length-1;row++){
+            if(schema[row][column] == '#'){
+                y = (row*y_step)-(y_step/2);
+                size = 0;
+                block_count = 1;
+                while(schema[row+block_count][column] == '#'){
+                    block_count++;
+                    size += y_step;
+                }
+                if(block_count > 1){
+                    new_map.push(new Mur('vertical', x, y, size));
+                }
+                row += block_count;
+            }
+        }
     }
     return new_map;
 }
