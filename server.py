@@ -65,11 +65,7 @@ def disconnect():
 
 @app.route('/', methods=['GET'])
 def index():
-    response = ""
-    for i in range(2,5):
-        response += "<a href='/new/{}'>{} joueurs</a><br/>".format(i,i)
-    response += "<a href='/new/random'>Random</a><br/>"
-    return response
+    return render_template('index.html')
 
 @app.route('/new/<int:places>', methods=['GET'])
 def new(places):

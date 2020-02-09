@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='UTF-8'>
+		<title>CAR-NAGE</title>
+		<style>
+			@font-face {
+				font-family: 'retro';
+				src: url('/fonts/PressStart2P-Regular.ttf') format('truetype');
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			body {
+				color: #aaa;
+				background-color: #2F2F2F;
+				text-align: center;
+				overflow-x: hidden;
+				font-family: retro;
+			}
+
+			#title {
+				position: relative;
+				margin: 70px auto 50px;
+				font-size: 80px;
+				font-weight: 700;
+				text-transform: uppercase;
+				text-shadow: 1px 1px 1px #919191,
+						1px 2px 1px #919191,
+						1px 3px 1px #919191,
+						1px 4px 1px #919191,
+						1px 5px 1px #919191,
+						1px 6px 1px #919191,
+						1px 7px 1px #919191,
+						1px 8px 1px #919191,
+						1px 9px 1px #919191,
+						1px 10px 1px #919191,
+					1px 18px 6px rgba(16,16,16,0.4),
+					1px 22px 10px rgba(16,16,16,0.2),
+					1px 25px 35px rgba(16,16,16,0.2),
+					1px 30px 60px rgba(16,16,16,0.4);
+			}
+
+			.button {
+				position: relative;
+				color: white;
+				text-decoration: none;
+				background-color: #FF2E2E;
+				font-weight: 700;
+				font-size: 25px;
+				display: inline-block;
+				-webkit-border-radius: 8px;
+				-moz-border-radius: 8px;
+				border-radius: 8px;
+				-webkit-box-shadow: 0px 9px 0px #A00A0A, 0px 9px 25px rgba(0,0,0,.7);
+				-moz-box-shadow: 0px 9px 0px #A00A0A, 0px 9px 25px rgba(0,0,0,.7);
+				box-shadow: 0px 9px 0px #A00A0A, 0px 9px 25px rgba(0,0,0,.7);
+				margin-top: 75px;
+				padding: 20px;
+				-webkit-transition: all .1s ease;
+				-moz-transition: all .1s ease;
+				-ms-transition: all .1s ease;
+				-o-transition: all .1s ease;
+				transition: all .1s ease;
+			}
+
+			.button:active {
+				-webkit-box-shadow: 0px 3px 0px #A00A0A, 0px 3px 6px rgba(0,0,0,.9);
+				-moz-box-shadow: 0px 3px 0px #A00A0A, 0px 3px 6px rgba(0,0,0,.9);
+				box-shadow: 0px 3px 0px #A00A0A, 0px 3px 6px rgba(0,0,0,.9);
+				position: relative;
+				top: 6px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="title">CAR-NAGE</div>
+		<a class="button" href="/new/2">2 players</a>
+		<a class="button" href="/new/3">3 players</a>
+		<a class="button" href="/new/4">4 players</a>
+		<br/>
+		<a class="button" href="/new/random">Random Fight</a>
+		<a href="https://github.com/H4ckd4ddy/car-nage.io" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/img/Github-ribbon.png" alt="Fork me on GitHub"></a>
+	</body>
+</html>

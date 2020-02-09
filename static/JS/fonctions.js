@@ -115,7 +115,7 @@ function explosion(x,y) {
         context.drawImage(img,-100,-100, 200, 200);
         context.restore();
     },10);
-    var temp = nbAlea(0,2);
+    var temp = 2;
     if(temp === 1) {
         son.setAttribute('src', '/son/explosion.wav');
     }else if(temp === 2){
