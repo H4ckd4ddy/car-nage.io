@@ -20,7 +20,7 @@ function generation_joueurs() {
 //et execution de la fonction correspondante
 function deplacements_joueurs(){
 
-    joueur_local = joueurs[id_joureur_local];
+    joueur_local = joueurs[id_joueur_local];
     
     if(touches.indexOf(joueur_local.touche_gauche) >= 0){
     	joueur_local.rotation_gauche();

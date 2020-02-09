@@ -93,7 +93,6 @@ document.addEventListener("DOMContentLoaded", function() {
         new_game();
     });
     socket.on('disconnect', function(data) {
-        run.stop();
         waiting_screen("Un joueur s'est deconnecté, fin de partie");
         window.setTimeout(function(){
             document.location = '/';

@@ -16,7 +16,7 @@ var joueur = function(id, x, y, angle=0) {
 	this.angle = angle;
 	this.status = 'ok';
 	this.score = 0;
-	this.distant = (id_joureur_local != this.id);
+	this.distant = (id_joueur_local != this.id);
 	
 	//Les vitesses sont des "pas" en pixels
 	this.vitesse_deplacement = vitesse_deplacement_standard;

@@ -24,7 +24,7 @@ def joined():
     join_room(room)
     emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
     if ROOMS[room]['players'] == ROOMS[room]['places']:
-        emit('confirm', {'message': "Pret ? (cliquez pour confirmer)"}, room=room)
+        emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
 
 @socketio.on('ready')
 def ready(message):
@@ -46,7 +46,7 @@ def end(message):
         ROOMS[room]['status'] = 'wainting'
         ROOMS[room]['map'] = generate_maze(9,9)
         ROOMS[room]['players_ready'] = 0
-        emit('confirm', {'message': "Recommencer ? (cliquez pour confirmer)"}, room=room)
+        emit('confirm', {'message': "Recommencer ? (pressez une touche)"}, room=room)
 
 @socketio.on('j')
 def move(message):

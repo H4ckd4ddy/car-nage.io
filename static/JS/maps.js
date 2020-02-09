@@ -53,3 +53,9 @@ function generate_map_from_schema(schema){
     }
     return new_map;
 }
+
+//Pourcentage des longueurs en fonction de l'axe
+function prct(x,axe){
+    if(axe === 'x'){return wCan/100 * x;}
+    else if(axe === 'y'){return hCan/100 * x;}
+}
