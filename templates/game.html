@@ -4,10 +4,6 @@
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="/CSS/style.css">
 		<title>CarNage</title>
-		<script>
-			var id_joueur_local = {{player_id}};
-			var nombre_de_joueurs = {{places}};
-		</script>
 	</head>
 	<body>
         <div id="game">
@@ -15,12 +11,13 @@
         </div>
         <audio id="son" hidden></audio>
 		<script src="/JS/socket.io.js"></script>
-        <script src="/JS/script.js"></script>
+        <script src="/JS/globals.js"></script>
 		<script src="/JS/objets_map.js"></script>
 		<script src="/JS/objets_joueur.js"></script>
         <script src="/JS/maps.js"></script>
 		<script src="/JS/fonctions.js"></script>
         <script src="/JS/menu.js"></script>
+        <script src="/JS/events.js"></script>
         <!-- img loading -->
 		<img src="/img/logo.png" style="display:none;"/>
 		<img src="/img/ball.png" style="display:none;"/>

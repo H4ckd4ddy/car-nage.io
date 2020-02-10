@@ -21,11 +21,21 @@ socketio = SocketIO(app, async_mode='eventlet')
 @socketio.on('connect')
 def joined():
     room = session.get('room')
-    if room in ROOMS:
-        join_room(room)
-        emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
-        if ROOMS[room]['players'] == ROOMS[room]['places']:
-            emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
+    if room not in ROOMS:
+        session['room'] = None
+        emit('info', {'message': 'Game not found'}, room=request.sid)
+        return
+    if ROOMS[room]['players'] >= ROOMS[room]['places']:
+        session['room'] = None
+        emit('info', {'message': 'Game full'}, room=request.sid)
+        return
+    session['player_id'] = ROOMS[room]['players']
+    ROOMS[room]['players'] += 1
+    emit('game_info', {'player_id': session.get('player_id'), 'players_count':ROOMS[room]['places']}, room=request.sid)
+    join_room(room)
+    emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
+    if ROOMS[room]['players'] == ROOMS[room]['places']:
+        emit('confirm', {'message': "Pret ? (pressez une touche)"}, room=room)
 
 @socketio.on('ready')
 def ready(message):
@@ -64,9 +74,9 @@ def disconnect():
     room = session.get('room')
     if room in ROOMS:
         del ROOMS[room]
-    if room in PUBLIC_ROOMS:
-        PUBLIC_ROOMS.remove(room)
-    emit('disconnect', {}, room=room)
+        if room in PUBLIC_ROOMS:
+            PUBLIC_ROOMS.remove(room)
+        emit('disconnect', {}, room=room)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -101,12 +111,6 @@ def random():
 @app.route('/game/<string:room>', methods=['GET'])
 def game(room):
     session['room'] = room
-    if room not in ROOMS:
-        return 'Game not found', 404
-    if ROOMS[room]['players'] >= ROOMS[room]['places']:
-        return 'Game full', 401
-    session['player_id'] = ROOMS[room]['players']
-    ROOMS[room]['players'] += 1
-    return render_template('game.html', player_id=session.get('player_id'), places=ROOMS[room]['places'])
+    return render_template('game.html')
 
 socketio.run(app=app, debug=True, host='0.0.0.0', port=80)

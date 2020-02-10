@@ -9,6 +9,14 @@
 */
 
 
+function new_game() {
+    projectiles = [];
+    touches = [];
+    generation_joueurs();
+    run = new interval(30, maj)
+    run.run()
+}
+
 function generation_joueurs() {
     joueurs = [];
     for(let i = 0;i < nombre_de_joueurs;i++){
