@@ -55,7 +55,7 @@ def end(message):
     if room in ROOMS:
         if ROOMS[room]['status'] == 'playing':
             ROOMS[room]['status'] = 'wainting'
-            ROOMS[room_id]['map'] = {'width':9,'height':9,'seed':int(secrets.token_hex(32),16)}
+            ROOMS[room]['map'] = {'width':9,'height':9,'seed':int(secrets.token_hex(32),16)}
             ROOMS[room]['players_ready'] = 0
             emit('confirm', {'message': "Recommencer ? (pressez une touche)"}, room=room)
 
