@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
     socket.on('game_info', function(data) {
         id_joueur_local = data.player_id;
         nombre_de_joueurs = data.players_count;
-        map = generate_map_from_schema(generate_maze(data.map.width, data.map.height, data.map.seed));
     });
     socket.on('j', function(data) {
         if(joueurs[data[0]].distant){
@@ -36,6 +35,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     socket.on('info', function(data) {
         waiting_screen(data.message);
+    });
+    socket.on('map', function(data) {
+        map = generate_map_from_schema(generate_maze(data.map.width,data.map.height,data.map.seed));
     });
     socket.on('confirm', function(data) {
         waiting_screen(data.message, true);

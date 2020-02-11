@@ -29,7 +29,7 @@ def joined():
         return
     session['player_id'] = ROOMS[room]['players']
     ROOMS[room]['players'] += 1
-    emit('game_info', {'player_id': session.get('player_id'), 'players_count':ROOMS[room]['places'], 'map':ROOMS[room]['map']}, room=request.sid)
+    emit('game_info', {'player_id': session.get('player_id'), 'players_count':ROOMS[room]['places']}, room=request.sid)
     join_room(room)
     emit('info', {'message': "Attente des autres joueurs ({}/{})".format(ROOMS[room]['players'],ROOMS[room]['places'])}, room=room)
     if ROOMS[room]['players'] == ROOMS[room]['places']:
@@ -42,6 +42,7 @@ def ready(message):
         ROOMS[room]['players_ready'] += 1
         emit('info', {'message': "Joueurs prets : ({}/{})".format(ROOMS[room]['players_ready'],ROOMS[room]['places'])}, room=room)
         if ROOMS[room]['players_ready'] == ROOMS[room]['places']:
+            emit('map', {'map': ROOMS[room]['map']}, room=room)
             for i in reversed(range(1,6)):
                 emit('info', {'message': str(i)}, room=room)
                 socketio.sleep(1)
