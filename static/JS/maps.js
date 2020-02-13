@@ -19,7 +19,6 @@ devMap[6] = new Mur('vertical', prct(50,'x'), prct(40,'y'), prct(40,'y'));
 devMap[7] = new Mur('horizontal', prct(20,'x'), prct(80,'y'), prct(30,'x'));
 
 
-
 function generate_map_from_schema(schema){
     let new_map = [];
     let y_step = ((hauteur-largeur_mur)/(schema.length-1));

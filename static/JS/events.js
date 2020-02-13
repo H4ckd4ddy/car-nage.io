@@ -1,3 +1,14 @@
+/*
+################################################
+#                                              #
+# Fichier contenant la gestion des evenements  #
+#                                              #
+# (Les message socket et les contoles clavier) #
+#                                              #
+################################################
+*/
+
+
 /* A l'appui d'une touche, on l'ajoute dans le tableau */
 document.addEventListener("keydown", function(event){
 	if(touches.indexOf(event.keyCode) < 0){

@@ -1,3 +1,11 @@
+/*
+#########################################################
+#                                                       #
+# Fichier contenant les fonctions de generation de map  #
+#                                                       #
+#########################################################
+*/
+
 
 function generate_grid(width, height){
     var grid = [];

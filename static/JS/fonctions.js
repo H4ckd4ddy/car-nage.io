@@ -135,6 +135,8 @@ function explosion(x,y) {
     setTimeout(function(){clearInterval(test)}, 400);
 }
 
+
+// More acurate interval function based on timestamp
 function interval(duration, fn){
     
     this.baseline = undefined

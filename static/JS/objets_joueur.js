@@ -1,9 +1,9 @@
 /*
-##########################################################################################
-#                                                                                        #
-#	Fichier contenant les constructeurs d'objets dynamiques (joueurs,projectiles)        #
-#                                                                                        #
-##########################################################################################
+#####################################################################################
+#                                                                                   #
+#	Fichier contenant les constructeurs d'objets dynamiques (joueurs,projectiles)   #
+#                                                                                   #
+#####################################################################################
 */
 
 
@@ -251,7 +251,7 @@ var joueur = function(id, x, y, angle=0) {
 	
 };
 
-var projectile = function(x, y, angle) {
+var projectile = function(x, y, angle, ttl=15) {
 	
 	//propriétés basiques
 	this.id = projectiles.length;
@@ -261,8 +261,8 @@ var projectile = function(x, y, angle) {
 	this.y = y;
 	this.angle = angle;
 	this.vitesse_deplacement = vitesse_deplacement_standard;
-	this.nombre_rebond = 0;
 	this.diametre = diametreProjectile;
+	this.ttl = ttl;
 	
 	this.trajectoire = function() {
 		
@@ -280,6 +280,11 @@ var projectile = function(x, y, angle) {
 	};
 	
 	this.rebond = function(sens) {
+
+		if(this.ttl <= 0){
+			this.explode();
+			return;
+		}
 		
 		switch(sens){
 			case "vertical": this.angle = (270) - (this.angle - 90);break;
@@ -292,9 +297,14 @@ var projectile = function(x, y, angle) {
 			this.angle -= 360;
 		}
 		
-		this.nombre_rebond++;
+		this.ttl--;
 		
 	};
+
+	this.explode = function(){
+		projectiles.splice(this.id, 0, 'explosé');
+        projectiles.splice(this.id+1, 1);
+	}
 	
 	this.test_collision_joueur = function() {
 		
@@ -317,10 +327,10 @@ var projectile = function(x, y, angle) {
 			
 			if (0 < AMdotAB && AMdotAB < ABdotAB && 0 < AMdotAD && AMdotAD < ADdotAD && joueurs[i].status !== 'mort') {
 				
+				this.explode();
+
                 explosion(joueurs[i].x,joueurs[i].y);
 				joueurs[i].status = 'mort';
-                projectiles.splice(this.id, 0, 'explosé');
-                projectiles.splice(this.id+1, 1);
 				
 				var joueurs_restants = [];
                 for(let j = 0;j < joueurs.length;j++){

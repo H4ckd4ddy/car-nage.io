@@ -1,3 +1,16 @@
+/*
+################################################
+#                                              #
+# Fichier contenant la gestion du menu de jeu  #
+#                                              #
+#    (L'affichage des messages sur la map)     #
+#                                              #
+################################################
+*/
+
+
+
+
 var wait_action = false;
 
 function action_handler(event){
