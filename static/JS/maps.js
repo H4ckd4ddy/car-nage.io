@@ -2,10 +2,10 @@
 
 function generate_empty_map() {
     let map = [];
-    map[0] = new Mur('vertical', largeur_mur/2, 0, hCan);
-    map[1] = new Mur('horizontal', 0, largeur_mur/2, wCan);
-    map[2] = new Mur('vertical', hCan-(largeur_mur/2), 0, hCan);
-    map[3] = new Mur('horizontal', 0, wCan-(largeur_mur/2), wCan);
+    map[0] = new Mur('vertical', walls_width/2, 0, hCan);
+    map[1] = new Mur('horizontal', 0, walls_width/2, wCan);
+    map[2] = new Mur('vertical', hCan-(walls_width/2), 0, hCan);
+    map[3] = new Mur('horizontal', 0, wCan-(walls_width/2), wCan);
     return map;
 }
 
@@ -21,18 +21,18 @@ devMap[7] = new Mur('horizontal', prct(20,'x'), prct(80,'y'), prct(30,'x'));
 
 function generate_map_from_schema(schema){
     let new_map = [];
-    let y_step = ((hauteur-largeur_mur)/(schema.length-1));
-    let x_step = ((largeur-largeur_mur)/(schema[0].length-1));
+    let y_step = ((game_height-walls_width)/(schema.length-1));
+    let x_step = ((game_width-walls_width)/(schema[0].length-1));
     let x,y,size,block_count = 0;
     console.log(schema);
     console.log(x_step);
     //generate horizontal wall
     for(let row = 0;row < schema.length;row++){
-        y = (row*y_step)+(largeur_mur/2);
+        y = (row*y_step)+(walls_width/2);
         for(let column = 0;column < schema[0].length-1;column++){
             if(schema[row][column] == '#'){
                 x = (column*x_step);
-                size = largeur_mur;
+                size = walls_width;
                 block_count = 1;
                 while(schema[row][column+block_count] == '#'){
                     block_count++;
@@ -47,11 +47,11 @@ function generate_map_from_schema(schema){
     }
     //generate vertical wall
     for(let column = 0;column < schema[0].length;column++){
-        x = (column*x_step)+(largeur_mur/2);
+        x = (column*x_step)+(walls_width/2);
         for(let row = 0;row < schema.length-1;row++){
             if(schema[row][column] == '#'){
                 y = (row*y_step);
-                size = largeur_mur;
+                size = walls_width;
                 block_count = 1;
                 while((schema[row+block_count])&&(schema[row+block_count][column] == '#')){
                     block_count++;

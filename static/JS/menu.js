@@ -29,7 +29,7 @@ function waiting_screen(msg='', need_action=false) {
         return;
     }
 
-    affichageMurs(generate_empty_map());
+    display_walls(generate_empty_map());
     
     var logo = new Image();
     logo.src = '/img/logo.png';

@@ -1,59 +1,55 @@
 /*
-################################################
-#                                              #
-#	Fichier contenant les fonctions globales   #
-#                                              #
-#	Par exemple les fonctions d'affichage      #
-#                                              #
-################################################
+#########################################
+#                                       #
+#   File containing globals functions   #
+#                                       #
+#########################################
 */
 
 
 function new_game() {
-    projectiles = [];
-    touches = [];
-    generation_joueurs();
-    run = new interval(30, maj)
+    bullets = [];
+    keys = [];
+    generate_players();
+    run = new interval(30, update)
     run.run()
 }
 
-function generation_joueurs() {
-    joueurs = [];
-    for(let i = 0;i < nombre_de_joueurs;i++){
-        joueurs.push(new joueur(i,emplacements_joueurs[i][0],emplacements_joueurs[i][1],emplacements_joueurs[i][2]))
+function generate_players() {
+    players = [];
+    for(let i = 0;i < players_count;i++){
+        players.push(new player(i,players_emplacements[i][0],players_emplacements[i][1],players_emplacements[i][2]))
     }
 }
 
-//Fonction qui verifie les touches actuellement utilsées (presente dans le tableau "touches")
-//et execution de la fonction correspondante
-function deplacements_joueurs(){
+//Check pressed keys (in "keys" array)
+function move(){
 
-    joueur_local = joueurs[id_joueur_local];
+    local_player = players[local_player_id];
     
-    if(touches.indexOf(joueur_local.touche_gauche) >= 0){
-    	joueur_local.rotation_gauche();
+    if(keys.indexOf(local_player.key_left) >= 0){
+    	local_player.rotate_left();
     }
     
-    if(touches.indexOf(joueur_local.touche_droite) >= 0){
-    	joueur_local.rotation_droite();
+    if(keys.indexOf(local_player.key_right) >= 0){
+    	local_player.rotate_right();
     }
     
-    if(touches.indexOf(joueur_local.touche_haut) >= 0){
-    	joueur_local.avancer();
+    if(keys.indexOf(local_player.key_up) >= 0){
+    	local_player.forward();
     }
     
-    if(touches.indexOf(joueur_local.touche_bas) >= 0){
-    	joueur_local.reculer();
+    if(keys.indexOf(local_player.key_down) >= 0){
+    	local_player.backward();
     }
     
-    if(touches.indexOf(joueur_local.touche_tir) >= 0){
-    	joueur_local.tir();
+    if(keys.indexOf(local_player.key_fire) >= 0){
+    	local_player.fire();
     }
 	
 }
 
-//Fonction d'affichage des murs suivant la map
-function affichageMurs(array) {
+function display_walls(array) {
     context.clearRect(0,0,wCan,hCan);
     context.fillStyle = 'black';
     for(var i = 0; i < array.length; i++){
@@ -61,17 +57,17 @@ function affichageMurs(array) {
     }
 }
 
-function affichageJoueurs(){
+function display_players(){
 	
-	for(var i = 0;i < joueurs.length;i++) {
+	for(var i = 0;i < players.length;i++) {
 		
-		if(joueurs[i].status !== 'mort') {
+		if(players[i].status !== 'mort') {
             var img = new Image();
             img.src = '/img/voiture' + (i + 1) + '.png';
             context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
-            context.translate(joueurs[i].x, joueurs[i].y);
-            context.rotate(joueurs[i].angle * Math.PI / 180);
+            context.translate(players[i].x, players[i].y);
+            context.rotate(players[i].angle * Math.PI / 180);
             context.drawImage(img, -25, -50, 50, 100);
             context.restore();
         }
@@ -80,41 +76,41 @@ function affichageJoueurs(){
 	
 }
 
-function deplacements_projectiles(){
+function bullets_move(){
 
-    for(var i = 0;i < projectiles.length;i++){
-        if(projectiles[i] !== 'explosé') {
-            projectiles[i].trajectoire();
+    for(var i = 0;i < bullets.length;i++){
+        if(bullets[i] !== 'explosé') {
+            bullets[i].way();
         }
     }
 
 }
 
-function affichageProjectiles(){
-    for(var i = 0; i < projectiles.length; i++) {
+function display_bullets(){
+    for(var i = 0; i < bullets.length; i++) {
 		
-        var imgBall = new Image();
-        imgBall.src = '/img/ball.png';
+        var bullet_image = new Image();
+        bullet_image.src = '/img/ball.png';
         context.save();
         context.setTransform(1, 0, 0, 1, 0, 0);
-        context.translate(projectiles[i].x,projectiles[i].y);
-        context.drawImage(imgBall,-15,-15, 15, 15);
+        context.translate(bullets[i].x,bullets[i].y);
+        context.drawImage(bullet_image,-15,-15, 15, 15);
         context.restore();
     }
 }
 
-function maj(){
+function update(){
     context.clearRect(0,0,wCan,hCan);
-    affichageMurs(map);
-    affichageJoueurs();
-	deplacements_joueurs();
-	deplacements_projectiles();
-	affichageProjectiles();
+    display_walls(map);
+    display_players();
+	move();
+	bullets_move();
+	display_bullets();
 }
 
 function explosion(x,y) {
-    var test;
-    test = setInterval(function () {
+    var boom;
+    boom = setInterval(function () {
         var img = new Image();
         img.src = '/img/explosion.png';
         context.save();
@@ -132,7 +128,7 @@ function explosion(x,y) {
         son.setAttribute('src', '/son/explosion2.wav');
     }
     son.play();
-    setTimeout(function(){clearInterval(test)}, 400);
+    setTimeout(function(){clearInterval(boom)}, 400);
 }
 
 

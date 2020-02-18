@@ -7,7 +7,7 @@
 */
 
 
-var joueur = function(id, x, y, angle=0) {
+var player = function(id, x, y, angle=0) {
 	
 	//propriétés basiques
 	this.id = id;
@@ -16,87 +16,87 @@ var joueur = function(id, x, y, angle=0) {
 	this.angle = angle;
 	this.status = 'ok';
 	this.score = 0;
-	this.distant = (id_joueur_local != this.id);
+	this.remote = (local_player_id != this.id);
 	
 	//Les vitesses sont des "pas" en pixels
-	this.vitesse_deplacement = vitesse_deplacement_standard;
-	this.vitesse_rotation = vitesse_deplacement_standard;
+	this.move_speed = default_move_speed;
+	this.rotation_speed = default_move_speed;
 	
 	//temps en seconde entre 2 tirs
-	this.delai_tir = delai_tir_standard;
+	this.fire_delay = default_fire_delay;
 	
 	//timestamp du dernier tir
-	this.dernier_tir = 0;
+	this.last_shoot = 0;
 	
 	//codes des touches pour ce joueur
-	this.touche_haut = touche_haut_standard[0];
-	this.touche_bas = touche_bas_standard[0];
-	this.touche_gauche = touche_gauche_standard[0];
-	this.touche_droite = touche_droite_standard[0];
-	this.touche_tir = touche_tir_standard[0];
+	this.key_up = default_up_key[0];
+	this.key_down = default_down_key[0];
+	this.key_left = default_left_key[0];
+	this.key_right = default_right_key[0];
+	this.key_fire = default_fire_key[0];
 
-	this.teleportation = function(x,y,angle) {
+	this.set_position = function(x,y,angle) {
 		this.x = x;
 		this.y = y;
 		this.angle = angle;
 	};
 
-	this.envoyer_position = function() {
+	this.send_position = function() {
 		socket.emit('j', [Math.round(this.id),Math.round(this.x),Math.round(this.y),Math.round(this.angle)]);
 	}
 
-	this.rotation_gauche = function() {
+	this.rotate_left = function() {
 		
-		var nouveau_angle = this.angle - this.vitesse_rotation;
-		
-		//application de la rotation uniquement si le test de collision retourne true (pas de collision)
-		if(this.test_collision(this.x, this.y, nouveau_angle)){
-			this.angle = nouveau_angle;
-			this.reset_angle();
-			this.envoyer_position()
-		}
-		
-	};
-	
-	this.rotation_droite = function() {
-		
-		var nouveau_angle = this.angle + this.vitesse_rotation;
+		var new_angle = this.angle - this.rotation_speed;
 		
 		//application de la rotation uniquement si le test de collision retourne true (pas de collision)
-		if(this.test_collision(this.x, this.y, nouveau_angle)){
-			this.angle = nouveau_angle;
+		if(this.test_collision(this.x, this.y, new_angle)){
+			this.angle = new_angle;
 			this.reset_angle();
-			this.envoyer_position()
+			this.send_position();
 		}
 		
 	};
 	
-	this.avancer = function() {
+	this.rotate_right = function() {
 		
-		//calcul de la nouvelle position (x & y) par trigonometrie à partir de l'angle et de la vitesse
-		var nouveau_x = this.x + Math.cos((this.angle-90)*(Math.PI/180)) * this.vitesse_deplacement;
-		var nouveau_y = this.y + Math.sin((this.angle-90)*(Math.PI/180)) * this.vitesse_deplacement;
+		var new_angle = this.angle + this.rotation_speed;
 		
-		//application du mouvement uniquement si le test de collision retourne true (pas de collision)
-		if(this.test_collision(nouveau_x, nouveau_y, this.angle)){
-			this.x = nouveau_x;
-			this.y = nouveau_y;
-			this.envoyer_position()
+		//application de la rotation uniquement si le test de collision retourne true (pas de collision)
+		if(this.test_collision(this.x, this.y, new_angle)){
+			this.angle = new_angle;
+			this.reset_angle();
+			this.send_position()
 		}
 		
 	};
 	
-	this.reculer = function() {
+	this.forward = function() {
 		
 		//calcul de la nouvelle position (x & y) par trigonometrie à partir de l'angle et de la vitesse
-		var nouveau_x = this.x - Math.cos((this.angle-90)*(Math.PI/180)) * this.vitesse_deplacement;
-		var nouveau_y = this.y - Math.sin((this.angle-90)*(Math.PI/180)) * this.vitesse_deplacement;
+		var new_x = this.x + Math.cos((this.angle-90)*(Math.PI/180)) * this.move_speed;
+		var new_y = this.y + Math.sin((this.angle-90)*(Math.PI/180)) * this.move_speed;
 		
 		//application du mouvement uniquement si le test de collision retourne true (pas de collision)
-		if(this.test_collision(nouveau_x, nouveau_y, this.angle)){
-			this.x = Math.round(nouveau_x);
-			this.y = Math.round(nouveau_y);
-			this.envoyer_position()
+		if(this.test_collision(new_x, new_y, this.angle)){
+			this.x = new_x;
+			this.y = new_y;
+			this.send_position()
+		}
+		
+	};
+	
+	this.backward = function() {
+		
+		//calcul de la nouvelle position (x & y) par trigonometrie à partir de l'angle et de la vitesse
+		var new_x = this.x - Math.cos((this.angle-90)*(Math.PI/180)) * this.move_speed;
+		var new_y = this.y - Math.sin((this.angle-90)*(Math.PI/180)) * this.move_speed;
+		
+		//application du mouvement uniquement si le test de collision retourne true (pas de collision)
+		if(this.test_collision(new_x, new_y, this.angle)){
+			this.x = Math.round(new_x);
+			this.y = Math.round(new_y);
+			this.send_position()
 		}
 		
 	};
@@ -112,13 +112,13 @@ var joueur = function(id, x, y, angle=0) {
 		
 	};
 	
-	this.calcul_hitbox = function(x,y,angle) {
+	this.compute_hitbox = function(x,y,angle) {
 		
 		//Calul les cordonnées X & Y des quatre coins du joueur via des formules de trigonometrie
 		
 		var angle_reference = (angle - 90);
-		var l = longueur_joueur;
-		var L = largeur_joueur;
+		var l = player_length;
+		var L = player_width;
 		
 		var angle_coin = (90 - (Math.atan((l / 2) / (L / 2)) * 180 / Math.PI));
 		var diagonale = Math.sqrt( Math.pow((l / 2), 2) + Math.pow((L / 2), 2) );
@@ -144,11 +144,11 @@ var joueur = function(id, x, y, angle=0) {
 	};
 	
 	//fonction qui test une eventuelle collision entre un joueur et les murs, à partir de sa futur position (centre)
-	this.test_collision = function(nouveau_x, nouveau_y, nouveau_angle) {
+	this.test_collision = function(new_x, new_y, new_angle) {
 		
 		//calcul de la position de 4 coins du joueur (actuelle et future)
-		var coins_joueur = this.calcul_hitbox(this.x,this.y,this.angle);
-		var nouveau_coins_joueur = this.calcul_hitbox(nouveau_x, nouveau_y, nouveau_angle);
+		var coins_joueur = this.compute_hitbox(this.x,this.y,this.angle);
+		var nouveau_coins_joueur = this.compute_hitbox(new_x, new_y, new_angle);
 		
 		//pour chaque mur
 		for(var i = 0;i < map.length;i++){
@@ -232,54 +232,54 @@ var joueur = function(id, x, y, angle=0) {
 	};
 	
 	//function qui genere les projectiles
-	this.tir = function() {
+	this.fire = function() {
 		
 		//si le joueur est vivant et qu'il n'a pas depasé son ratio de tir
-		if(this.dernier_tir <= (Date.now() - (this.delai_tir * 1000)) && this.status !== 'mort'){
+		if(this.last_shoot <= (Date.now() - (this.fire_delay * 1000)) && this.status !== 'mort'){
 			
-			var nouveau_x = this.x + Math.cos((this.angle-90)*(Math.PI/180)) * 50;
-			var nouveau_y = this.y + Math.sin((this.angle-90)*(Math.PI/180)) * 50;
+			var new_x = this.x + Math.cos((this.angle-90)*(Math.PI/180)) * 50;
+			var new_y = this.y + Math.sin((this.angle-90)*(Math.PI/180)) * 50;
 			
-			projectiles.push(new projectile(nouveau_x, nouveau_y, this.angle));
+			bullets.push(new bullet(new_x, new_y, this.angle));
 
-			socket.emit('tir', {'id':this.id,'x':Math.round(nouveau_x),'y':Math.round(nouveau_y),'angle':Math.round(this.angle)});
+			socket.emit('tir', {'id':this.id,'x':Math.round(new_x),'y':Math.round(new_y),'angle':Math.round(this.angle)});
 
-			this.dernier_tir = Date.now();
+			this.last_shoot = Date.now();
 		}
 		
 	}
 	
 };
 
-var projectile = function(x, y, angle, ttl=15) {
+var bullet = function(x, y, angle, ttl=15) {
 	
 	//propriétés basiques
-	this.id = projectiles.length;
-	this.x_precedent = x;
-	this.y_precedent = y;
+	this.id = bullets.length;
+	this.previous_x = x;
+	this.previous_y = y;
 	this.x = x;
 	this.y = y;
 	this.angle = angle;
-	this.vitesse_deplacement = vitesse_deplacement_standard;
-	this.diametre = diametreProjectile;
+	this.move_speed = default_move_speed;
+	this.diameter = bullet_diameter;
 	this.ttl = ttl;
 	
-	this.trajectoire = function() {
+	this.way = function() {
 		
 		//memorisation des anciennes coordonnées
-		this.x_precedent = this.x;
-		this.y_precedent = this.y;
+		this.previous_x = this.x;
+		this.previous_y = this.y;
 		
 		//calcul de la nouvelle position (x & y) par trigonometrie à partir de l'angle et de la vitesse
-		this.x += Math.round(Math.cos((this.angle-90)*(Math.PI/180)) * this.vitesse_deplacement);
-		this.y += Math.round(Math.sin((this.angle-90)*(Math.PI/180)) * this.vitesse_deplacement);
+		this.x += Math.round(Math.cos((this.angle-90)*(Math.PI/180)) * this.move_speed);
+		this.y += Math.round(Math.sin((this.angle-90)*(Math.PI/180)) * this.move_speed);
 		
 		this.test_collision();
-		this.test_collision_joueur();
+		this.test_player_collision();
 		
 	};
 	
-	this.rebond = function(sens) {
+	this.bounce = function(sens) {
 
 		if(this.ttl <= 0){
 			this.explode();
@@ -302,15 +302,15 @@ var projectile = function(x, y, angle, ttl=15) {
 	};
 
 	this.explode = function(){
-		projectiles.splice(this.id, 0, 'explosé');
-        projectiles.splice(this.id+1, 1);
+		bullets.splice(this.id, 0, 'explosé');
+        bullets.splice(this.id+1, 1);
 	}
 	
-	this.test_collision_joueur = function() {
+	this.test_player_collision = function() {
 		
-		for(var i = 0;i < joueurs.length;i++){
+		for(var i = 0;i < players.length;i++){
 			
-			var angles = joueurs[i].calcul_hitbox(joueurs[i].x,joueurs[i].y,joueurs[i].angle);
+			var angles = players[i].compute_hitbox(players[i].x,players[i].y,players[i].angle);
 			
 			//calcul utilisant des vecteurs pour verifier la presence d'un projectile dans la hitbox du joueur
 			var AMx = this.x - angles[0].x;
@@ -325,27 +325,27 @@ var projectile = function(x, y, angle, ttl=15) {
 			var AMdotAD = AMx * ADx + AMy * ADy;
 			var ADdotAD = ADx * ADx + ADy * ADy;
 			
-			if (0 < AMdotAB && AMdotAB < ABdotAB && 0 < AMdotAD && AMdotAD < ADdotAD && joueurs[i].status !== 'mort') {
+			if (0 < AMdotAB && AMdotAB < ABdotAB && 0 < AMdotAD && AMdotAD < ADdotAD && players[i].status !== 'mort') {
 				
 				this.explode();
 
-                explosion(joueurs[i].x,joueurs[i].y);
-				joueurs[i].status = 'mort';
+                explosion(players[i].x,players[i].y);
+				players[i].status = 'mort';
 				
-				var joueurs_restants = [];
-                for(let j = 0;j < joueurs.length;j++){
-                	if(joueurs[j].status != 'mort'){
-                		joueurs_restants.push(joueurs[j]);
+				var alives_players = [];
+                for(let j = 0;j < players.length;j++){
+                	if(players[j].status != 'mort'){
+                		alives_players.push(players[j]);
 					}
                 }
 
-                if(joueurs_restants.length <= 1){
+                if(alives_players.length <= 1){
                 	
-                	(function(joueurs_restants){
+                	(function(alives_players){
                 		//delai d'attente pour verifier que le joueur ne va pas mourir
 						setTimeout(function () {
 		                    run.stop()
-		                    if(joueurs_restants.length == 1){
+		                    if(alives_players.length == 1){
 		                    	waiting_screen("Victoire d'un joueur inconnue")
 		                    }else{
 		                    	waiting_screen("Match nul")
@@ -354,7 +354,7 @@ var projectile = function(x, y, angle, ttl=15) {
 		                setTimeout(function () {
 		                	socket.emit('end', {});
 		                }, 6000);
-		            })(joueurs_restants);
+		            })(alives_players);
 				}
 				
 			}
@@ -401,18 +401,18 @@ var projectile = function(x, y, angle, ttl=15) {
 					
 					if((this.y >= face.debut["y"]) && (this.y <= face.fin["y"])){
 						
-						if(this.x_precedent < face.debut["x"]){
+						if(this.previous_x < face.debut["x"]){
 							
 							if(this.x >= face.debut["x"]){
 								this.x = face.debut["x"] - 5;
-								this.rebond(face.orientation);
+								this.bounce(face.orientation);
 							}
 							
-						}else if(this.x_precedent > face.debut["x"]){
+						}else if(this.previous_x > face.debut["x"]){
 							
 							if(this.x <= face.debut["x"]){
 								this.x = face.debut["x"] + 5;
-								this.rebond(face.orientation);
+								this.bounce(face.orientation);
 							}
 							
 						}
@@ -425,18 +425,18 @@ var projectile = function(x, y, angle, ttl=15) {
 					
 					if((this.x >= face.debut["x"]) && (this.x <= face.fin["x"])){
 						
-						if(this.y_precedent < face.debut["y"]){
+						if(this.previous_y < face.debut["y"]){
 							
 							if(this.y >= face.debut["y"]){
 								this.y = face.debut["y"] - 5;
-								this.rebond(face.orientation);
+								this.bounce(face.orientation);
 							}
 							
-						}else if(this.y_precedent > face.debut["y"]){
+						}else if(this.previous_y > face.debut["y"]){
 							
 							if(this.y <= face.debut["y"]){
 								this.y = face.debut["y"] + 5;
-								this.rebond(face.orientation);
+								this.bounce(face.orientation);
 							}
 							
 						}

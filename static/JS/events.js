@@ -1,25 +1,23 @@
 /*
-################################################
-#                                              #
-# Fichier contenant la gestion des evenements  #
-#                                              #
-# (Les message socket et les contoles clavier) #
-#                                              #
-################################################
+#######################################
+#                                     #
+#   File containing events handlers   #
+#                                     #
+#######################################
 */
 
 
-/* A l'appui d'une touche, on l'ajoute dans le tableau */
+/* If key is pressed, push it in keys array */
 document.addEventListener("keydown", function(event){
-	if(touches.indexOf(event.keyCode) < 0){
-		touches.push(event.keyCode);
+	if(keys.indexOf(event.keyCode) < 0){
+		keys.push(event.keyCode);
 	}
 }, false);
 
-/* Au relachement de la touche, on la retire du tableau */
+/* If key is released, pop it from keys array */
 document.addEventListener("keyup", function(event){
-	if(touches.indexOf(event.keyCode) >= 0){
-		touches.splice(touches.indexOf(event.keyCode), 1);
+	if(keys.indexOf(event.keyCode) >= 0){
+		keys.splice(keys.indexOf(event.keyCode), 1);
 	}
 }, false);
 
@@ -31,17 +29,17 @@ document.addEventListener("DOMContentLoaded", function() {
     socket = io.connect(document.location.protocol+'//'+document.domain+':'+location.port);
 
     socket.on('game_info', function(data) {
-        id_joueur_local = data.player_id;
-        nombre_de_joueurs = data.players_count;
+        local_player_id = data.player_id;
+        players_count = data.players_count;
     });
     socket.on('j', function(data) {
-        if(joueurs[data[0]].distant){
-            joueurs[data[0]].teleportation(data[1],data[2],data[3]);
+        if(players[data[0]].remote){
+            players[data[0]].set_position(data[1],data[2],data[3]);
         }
     });
     socket.on('tir', function(data) {
-        if(joueurs[data.id].distant){
-            projectiles.push(new projectile(data.x,data.y,data.angle));
+        if(players[data.id].remote){
+            bullets.push(new bullet(data.x,data.y,data.angle));
         }
     });
     socket.on('info', function(data) {
